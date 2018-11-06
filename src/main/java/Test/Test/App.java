@@ -28,10 +28,10 @@ public class App extends Application
 	
 		
 		stg.setScene(scene);
-		stg.setWidth(300);
+		stg.setWidth(600);
 		stg.setHeight(400);
 		stg.setTitle("Okno logowania");
-		stg.setResizable(false);
+	//	stg.setResizable(false);
 		stg.show();
 	}
 	

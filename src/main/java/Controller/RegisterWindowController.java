@@ -31,9 +31,17 @@ public class RegisterWindowController {
 		String s1 = loginR.getText();
 		String s2 = passFieldR.getText();
 		if (Baza.checkLoginPass(s1, s2) != 0) {
+			
 			label.setVisible(true);
 			label.setText("Rejestracja zakończona niepowodzeniem");
-		} else {
+		}
+		else if(s1.length() == 0 || s2.length() == 0)
+		{
+			label.setVisible(true);
+			label.setText("Uzupełnij wszystkie pola");
+		}
+		else {
+			
 			Baza.addRow(s1,s2);
 			label.setVisible(true);
 			label.setText("Rejestracja zakończona sukcesem");

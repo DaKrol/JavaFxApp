@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
 public class PaneWindowController {
@@ -32,23 +33,15 @@ public class PaneWindowController {
 		
 	}
 
+	
 	@FXML
 	public void onMouseClickedZaloguj() 
 	{
 		String s1 = login.getText();
 		String s2 = passField.getText();
-		if (Baza.checkLoginPass(s1, s2) != 0) {
-			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(this.getClass().getResource("/fxml/LoginWindow.fxml"));
-			
-			Pane pane = null;
 		
-			try {
-				 pane = loader.load();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			mainController.setScreen(pane);
+		 if (Baza.checkLoginPass(s1, s2) != 0) {
+			mainController.loadLoginWindow();
 		}
 		else
 		{
