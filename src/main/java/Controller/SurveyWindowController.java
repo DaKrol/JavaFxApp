@@ -1,6 +1,6 @@
 package Controller;
 
-import Database.Baza;
+import Server.Baza;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -13,7 +13,7 @@ public class SurveyWindowController {
 	private int obecnePytanie = 1;
 	@FXML
 	private Label question;
-	@FXML 
+	@FXML
 	private Label info;
 	@FXML
 	private ChoiceBox chooseAnswer;
@@ -22,33 +22,38 @@ public class SurveyWindowController {
 
 	@FXML
 	public void nextQuestion() {
-
-		if(next.getText() == "Cofnij")
-		{
-			mainController.loadLoginWindow();
+		if (chooseAnswer.getValue() == null) {
+			info.setVisible(true);
 		}
-		else if (liczbaPytan  == obecnePytanie) {
+		else
+		{
+			
+		if (next.getText() == "Cofnij") {
+			mainController.loadLoginWindow();
+		} else if (liczbaPytan == obecnePytanie) {
 			info.setVisible(false);
 			question.setText("Koniec ankiety");
 			chooseAnswer.setVisible(false);
 			next.setText("Cofnij");
 		} else {
-			if (chooseAnswer.getValue() == null)
-			{
-				info.setVisible(true);
-			}
-			else {
+		
 				info.setVisible(false);
 				chooseAnswer.getItems().clear();
-				String pytanie = Baza.getQuestion(idAnkiety, ++obecnePytanie);
+				String pytanie = Baza.executeStatmentString("SELECT PYTANIE FROM PYTANIA WHERE ID_PYTANIA_ANK ="
+						+ ++obecnePytanie + " and ID_ANKIETY = " + idAnkiety);
 				String a, b, c, d;
 
 				if (pytanie != null)
 					question.setText(pytanie);
-				a = Baza.getAnswer(idAnkiety, obecnePytanie, "ODPA");
-				b = Baza.getAnswer(idAnkiety, obecnePytanie, "ODPB");
-				c = Baza.getAnswer(idAnkiety, obecnePytanie, "ODPC");
-				d = Baza.getAnswer(idAnkiety, obecnePytanie, "ODPD");
+				a = Baza.executeStatmentString("SELECT ODPA FROM PYTANIA WHERE ID_PYTANIA_ANK =" + obecnePytanie
+						+ " and ID_ANKIETY = " + idAnkiety);
+				b = Baza.executeStatmentString("SELECT ODPB FROM PYTANIA WHERE ID_PYTANIA_ANK =" + obecnePytanie
+						+ " and ID_ANKIETY = " + idAnkiety);
+				c = Baza.executeStatmentString("SELECT ODPC FROM PYTANIA WHERE ID_PYTANIA_ANK =" + obecnePytanie
+						+ " and ID_ANKIETY = " + idAnkiety);
+				d = Baza.executeStatmentString("SELECT ODPD FROM PYTANIA WHERE ID_PYTANIA_ANK =" + obecnePytanie
+						+ " and ID_ANKIETY = " + idAnkiety);
+
 				if (a != null)
 					setChooseAnswer(a);
 				if (b != null)

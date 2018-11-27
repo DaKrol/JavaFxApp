@@ -2,7 +2,8 @@ package Controller;
 
 import java.io.IOException;
 
-import Database.Baza;
+import Data.Users;
+import Server.Baza;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -14,7 +15,7 @@ import javafx.scene.layout.Pane;
 
 public class PaneWindowController {
 	
-
+	private Client client;
 	private MainController mainController;
 	
 	@FXML
@@ -33,14 +34,16 @@ public class PaneWindowController {
 		
 	}
 
-	
+
 	@FXML
 	public void onMouseClickedZaloguj() 
 	{
+		
 		String s1 = login.getText();
 		String s2 = passField.getText();
-		
-		 if (Baza.checkLoginPass(s1, s2) != 0) {
+		int temp = Integer.parseInt(client.getString("SELECT * FROM Users where login like '" + s1 + "' and pass like '" + s2 + "'"));
+		System.out.println(client.executeQuerry("SELECT * FROM Users where login like '" + s1 + "' and pass like '" + s2 + "'"));
+		if (temp != -1) {
 			mainController.loadLoginWindow();
 		}
 		else
@@ -65,12 +68,18 @@ public class PaneWindowController {
 		}
 		RegisterWindowController regController = loader.getController();
 		regController.setMainController(mainController);
+		regController.setClient(client);
 		mainController.setScreen(pane);
 	}
 
 	public void setMainController(MainController mainController) {
 		this.mainController=mainController;
 		
+	}
+
+
+	public void setClient(Client client) {
+		this.client=client;
 	}
 	
 	

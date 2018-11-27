@@ -2,7 +2,7 @@ package Controller;
 
 import java.io.IOException;
 
-import Database.Baza;
+import Server.Baza;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -13,7 +13,7 @@ import javafx.scene.layout.Pane;
 public class RegisterWindowController {
 
 	private MainController mainController;
-
+	private Client client;
 	@FXML
 	private TextField loginR;
 	@FXML
@@ -30,8 +30,10 @@ public class RegisterWindowController {
 	public void register() {
 		String s1 = loginR.getText();
 		String s2 = passFieldR.getText();
-		if (Baza.checkLoginPass(s1, s2) != 0) {
-			
+		String statment = "SELECT * FROM Users where login like '" + s1 + "' and pass like '" + s2 + "'";
+		int temp = Integer.parseInt(client.getString(statment));
+		
+		if (temp != -1) {
 			label.setVisible(true);
 			label.setText("Rejestracja zakończona niepowodzeniem");
 		}
@@ -41,8 +43,12 @@ public class RegisterWindowController {
 			label.setText("Uzupełnij wszystkie pola");
 		}
 		else {
-			
-			Baza.addRow(s1,s2);
+			int max = 0;
+			statment = "SELECT MAX(USER_ID) FROM USERS";
+			max = Integer.parseInt(client.getString(statment)) +1; 
+			statment = "INSERT INTO USERS VALUES (" + max + ",'" + s1 + "' , '" + s2 + "')";
+			client.getString(statment);
+		
 			label.setVisible(true);
 			label.setText("Rejestracja zakończona sukcesem");
 		}
@@ -52,6 +58,10 @@ public class RegisterWindowController {
 	public void setMainController(MainController mainController) {
 		this.mainController = mainController;
 
+	}
+
+	public void setClient(Client client) {
+		this.client=client;
 	}
 
 }

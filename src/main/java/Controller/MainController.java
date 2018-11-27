@@ -10,7 +10,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
 public class MainController {
-
+	private Client client;
+	
 	@FXML
 	private StackPane mainStackPane;
 	
@@ -18,6 +19,15 @@ public class MainController {
 	@FXML
 	public void initialize() {
 		loadPaneWindow();
+	}
+	
+	{
+		client = new Client();
+		try {
+			client.Connect();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	public void loadPaneWindow()
 	{
@@ -31,6 +41,7 @@ public class MainController {
 		}
 		PaneWindowController paneController = loader.getController();
 		paneController.setMainController(this);
+		paneController.setClient(client);
 		setScreen(pane);
 	}
 	public void loadLoginWindow()
@@ -47,9 +58,11 @@ public class MainController {
 		}
 		LoginWindowController logController = loader.getController();
 		logController.setMainController(this);
+		logController.setClient(client);
 		setScreen(pane);
 	
 	}
+
 	public void setScreen(BorderPane pane)
 	{
 		mainStackPane.getChildren().clear();

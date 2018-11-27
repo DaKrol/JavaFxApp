@@ -2,7 +2,7 @@ package Controller;
 
 import java.io.IOException;
 
-import Database.Baza;
+import Server.Baza;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -12,7 +12,7 @@ import javafx.scene.layout.AnchorPane;
 public class LoginWindowController {
 
 	private MainController mainController;
-
+	private Client client;
 	@FXML
 	private ComboBox<String> choiceBox;
 	@FXML
@@ -22,9 +22,11 @@ public class LoginWindowController {
 
 	@FXML
 	public void choice() {
-		int nrOfSurveys = Baza.getNumberOfSurveys();
+		choiceBox.getItems().clear();
+		int nrOfSurveys = Baza.executeStatment("SELECT MAX(id) FROM ankieta");
 		for (int i = 0; i < nrOfSurveys; i++) {
-			choiceBox.getItems().add(Baza.getData(i + 1));
+			String s = Baza.executeStatmentString("SELECT nazwa from ANKIETA where id =" + (i+1));
+			choiceBox.getItems().add(s);
 		}
 	}
 
@@ -45,19 +47,26 @@ public class LoginWindowController {
 			}
 			String pytanie;
 			String a, b, c, d;
-			int idAnkiety = 0;
-			idAnkiety = Baza.getIdAnkiety(choiceBox.getValue());
-			pytanie = Baza.getQuestion(idAnkiety, 1);
+			int idAnkiety = 0, liczbaPytan;
+			String statment = "SELECT ID FROM ANKIETA WHERE NAZWA = '"+ choiceBox.getValue() +"'";
+			idAnkiety = Integer.parseInt(client.getString(statment));
+			//idAnkiety = Baza.executeStatment("SELECT ID FROM ANKIETA WHERE NAZWA = '"+ choiceBox.getValue() +"'");
+			pytanie = client.getString("SELECT PYTANIE FROM PYTANIA WHERE ID_PYTANIA_ANK =" + 1 + " and ID_ANKIETY = " +idAnkiety);
+		//	pytanie =  Baza.executeStatmentString("SELECT PYTANIE FROM PYTANIA WHERE ID_PYTANIA_ANK =" + 1 + " and ID_ANKIETY = " +idAnkiety);
+			liczbaPytan = Baza.executeStatment("SELECT MAX(ID_PYTANIA_ANK) FROM PYTANIA WHERE ID_ANKIETY = '"+ idAnkiety +"'");
 
 			SurveyWindowController surController = loader.getController();
 			
 			surController.setIdAnkiety(idAnkiety);
 			surController.setLabel(pytanie);	
-			surController.setLiczbaPytan(Baza.getLiczbaPytan(idAnkiety));
-			a = Baza.getAnswer(idAnkiety, 1, "ODPA");
-			b = Baza.getAnswer(idAnkiety, 1, "ODPB");
-			c = Baza.getAnswer(idAnkiety, 1, "ODPC");
-			d = Baza.getAnswer(idAnkiety, 1, "ODPD");
+			surController.setLiczbaPytan(liczbaPytan);
+			
+			a = Baza.executeStatmentString("SELECT ODPA FROM PYTANIA WHERE ID_PYTANIA_ANK =" + 1 + " and ID_ANKIETY = " +idAnkiety);
+			b = Baza.executeStatmentString("SELECT ODPB FROM PYTANIA WHERE ID_PYTANIA_ANK =" + 1 + " and ID_ANKIETY = " +idAnkiety);
+			c = Baza.executeStatmentString("SELECT ODPC FROM PYTANIA WHERE ID_PYTANIA_ANK =" + 1 + " and ID_ANKIETY = " +idAnkiety);
+			d = Baza.executeStatmentString("SELECT ODPD FROM PYTANIA WHERE ID_PYTANIA_ANK =" + 1 + " and ID_ANKIETY = " +idAnkiety);
+			
+			
 			if (a != null)
 				surController.setChooseAnswer(a);
 			if (b != null)
@@ -82,5 +91,9 @@ public class LoginWindowController {
 	public void setMainController(MainController mainController) {
 		this.mainController = mainController;
 
+	}
+
+	public void setClient(Client client) {
+		this.client=client;
 	}
 }
